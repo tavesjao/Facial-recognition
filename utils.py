@@ -49,6 +49,34 @@ def getBinaryData():
                 X.append([int(p) for p in row[1].split()])
     return np.array(X) / 255.0, np.array(Y)
 
+def get_data(balanced_data=True):
+    Y = []
+    X = []
+
+    first = True
+    for line in open('Data/fer2013.csv'):
+        if first:
+            first = False
+        else:
+            row = line.split(',')
+            Y.append(int(row[0]))
+            X.append([int(p) for p in row[1].split()])
+    X,Y =  np.array(X) / 255.0, np.array(Y)
+
+    X, y = shuffle(X, Y)
+    Xtrain, Ytrain = X[:-1000], Y[:-1000]
+    Xvalid, Yvalid = X[-1000:], Y[-1000:]
+
+    if balanced_data:
+        X0, Y0 = Xtrain[Ytrain!=1, :], Ytrain[Ytrain!=1]
+        X1 = Xtrain[Ytrain==1, :]
+        X1 = np.repeat(X1, 9, axis=0)
+        Xtrain = np.vstack([X0, X1])
+        Ytrain = np.concatenate((Y0, [1]*len(X1)))
+    
+    return Xtrain, Ytrain, Xvalid, Yvalid
+
+
 def init_weight_and_bias(M1, M2):
     W = np.random.randn(M1, M2) / np.sqrt(M1)
     b = np.zeros(M2)
@@ -56,6 +84,13 @@ def init_weight_and_bias(M1, M2):
 
 def sigmoid(A):
     return 1 / (1 + np.exp(-A))
+
+def softmax(A):
+    expA = np.exp(A)
+    return expA / expA.sum(axis=1, keepdims=True)
+
+def softmax_cost(T, Y):
+    return -(T*np.log(Y)).sum()
 
 def sigmoid_cost(T, Y):
     return -(T*np.log(Y) + (1-T)*np.log(1-Y)).sum()
@@ -65,4 +100,12 @@ def error_rate(targets, predictions):
 
 def classification_rate(Y, P):
     return np.mean(Y == P)
+
+def y2indicator(y):
+    N = len(y)
+    K = len(set(y))
+    ind = np.zeros((N, K))
+    for i in range(N):
+        ind[i, y[i]] = 1
+    return ind
     

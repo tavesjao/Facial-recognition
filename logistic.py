@@ -8,7 +8,7 @@ class LogisticModel(object):
     def __init__(self):
         pass
     
-    def fit(self, X, Y, learning_rate=10e-7, reg=0, epochs=10000, show_fig=False):
+    def fit(self, X, Y, learning_rate=1e-7, reg=0.1, epochs=120000, show_fig=False):
         X, Y = shuffle(X, Y)
         #split into validation set and training set
         X_valid, Y_valid = X[-1000:], Y[-1000:]
@@ -33,7 +33,7 @@ class LogisticModel(object):
             #gradient descent step                    #added regularization
             self.w -= learning_rate*(X.T.dot(pY - Y) + reg*self.w)
             self.b -= learning_rate*((pY - Y).sum() + reg*self.b)
-            if i%100 == 0:
+            if i%1000 == 0:
                 #calculate cost and error rate
                 pYvalid = self.forward(X_valid)
                 cost = sigmoid_cost(Y_valid, pYvalid)
@@ -70,7 +70,7 @@ def main():
     Y = np.array([0]*len(X0) + [1]*len(X1))
 
     model = LogisticModel()
-    model.fit(X, Y, show_fig=True)
+    model.fit(X, Y, show_fig=True, reg=0.08)
     print(model.score(X, Y))
 
 if __name__ == '__main__':
