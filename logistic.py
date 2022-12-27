@@ -1,14 +1,15 @@
 # Create logistic regression class for binary classification
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from utils import getBinaryData, sigmoid, init_weight_and_bias, sigmoid_cost, error_rate, classification_rate
+from utils import getBinaryData, sigmoid, init_weight_and_bias, sigmoid_cost, error_rate, classification_rate, sign
 
 class LogisticModel(object):
     def __init__(self):
         pass
     
-    def fit(self, X, Y, learning_rate=1e-7, reg=0.1, epochs=120000, show_fig=False):
+    def fit(self, X, Y, learning_rate=1e-6, reg = 0.05, epochs=120000, show_fig=False):
         X, Y = shuffle(X, Y)
         #split into validation set and training set
         X_valid, Y_valid = X[-1000:], Y[-1000:]
@@ -31,8 +32,8 @@ class LogisticModel(object):
             pY = self.forward(X)
 
             #gradient descent step                    #added regularization
-            self.w -= learning_rate*(X.T.dot(pY - Y) + reg*self.w)
-            self.b -= learning_rate*((pY - Y).sum() + reg*self.b)
+            self.w -= learning_rate*(X.T.dot(pY - Y) + reg*sign(self.w) + reg*self.w)
+            self.b -= learning_rate*((pY - Y).sum() + reg*sign(self.w) + reg*self.w)
             if i%1000 == 0:
                 #calculate cost and error rate
                 pYvalid = self.forward(X_valid)
@@ -61,7 +62,9 @@ class LogisticModel(object):
         return classification_rate(Y, prediction)
 
 def main():
-    X, Y = getBinaryData()
+    X, Y = getBinaryData('Data/diabetes.csv')
+    df_feats = pd.DataFrame(X)
+    df_tgt = pd.DataFrame(Y)
     X0 = X[Y==0, :]
     X1 = X[Y==1, :]
     #balance the data through oversampling
@@ -72,6 +75,8 @@ def main():
     model = LogisticModel()
     model.fit(X, Y, show_fig=True, reg=0.08)
     print(model.score(X, Y))
+    print(df_feats.head())
+    print(df_tgt.head())
 
 if __name__ == '__main__':
     main()

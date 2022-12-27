@@ -34,11 +34,11 @@ def getData(balance_ones=True, Ntest=1000):
 
     return Xtrain, Ytrain, Xvalid, Yvalid
 
-def getBinaryData():
+def getBinaryData(filename:str='Data/fer2013.csv'):
     Y = []
     X = []
     first = True
-    for line in open('Data/fer2013.csv'):
+    for line in open(filename):
         if first:
             first = False
         else:
@@ -49,12 +49,12 @@ def getBinaryData():
                 X.append([int(p) for p in row[1].split()])
     return np.array(X) / 255.0, np.array(Y)
 
-def get_data(balanced_data=True):
+def get_data(balanced_data=True, filename:str='Data/fer2013.csv'):
     Y = []
     X = []
 
     first = True
-    for line in open('Data/fer2013.csv'):
+    for line in open(filename):
         if first:
             first = False
         else:
@@ -109,3 +109,34 @@ def y2indicator(y):
         ind[i, y[i]] = 1
     return ind
     
+def sign(x:list):
+    for element in x:
+        if element>0:
+            element=1
+        else:
+            element=0
+    return x
+
+def get_regular_data(path):
+    import pandas as pd
+    data = pd.read_csv(path)
+    return data
+
+def split_data(data):
+    #data = get_regular_data
+    split_pctg = int(0.6*len(data))
+    X = data.drop('Outcome', axis=1)
+    y = data['Outcome']
+    X = X.to_numpy()
+    y = y.to_numpy()
+    Xtrain, Xvalid = X[:split_pctg], X[split_pctg:]
+    Ytrain, Yvalid = y[:split_pctg], y[split_pctg:]
+    return Xtrain, Ytrain, Xvalid, Yvalid
+
+#create function to standardize data
+def standardize_data(Xtrain, Xvalid):
+    mean = Xtrain.mean(axis=0)
+    std = Xtrain.std(axis=0)
+    Xtrain = (Xtrain-mean)/std
+    Xvalid = (Xvalid-mean)/std
+    return Xtrain, Xvalid
