@@ -3,12 +3,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from utils import get_data,get_regular_data, split_data,sigmoid, init_weight_and_bias, softmax,softmax_cost, error_rate, classification_rate, y2indicator, standardize_data
+from utils import get_data,get_regular_data, split_data,sigmoid, init_weight_and_bias, softmax,softmax_cost, error_rate, classification_rate, y2indicator, standardize_data, save_model
 
 class LogisticModel(object):
     def __init__(self):
         self.learning_rate = 10e-7
-        self.reg = 0.05
+        self.reg = 0.02
         self.epochs = 200000
 
     def fit(self,X,Y, Xvalid, Yvalid, show_fig = False):
@@ -73,7 +73,7 @@ def main():
     print("Test score:", model.score(XTest, YTest))
     print("Final W:", model.get_weights())
     print("Final b:", model.get_bias())
-
+    
 if __name__ == '__main__':
     main()
 
