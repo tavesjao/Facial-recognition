@@ -141,8 +141,5 @@ def standardize_data(Xtrain, Xvalid):
     Xvalid = (Xvalid-mean)/std
     return Xtrain, Xvalid
 
-def save_model(model, filename):
-    import pickle
-    with open (filename, 'wb') as f:
-        pickle.dump(model, f)
+
         

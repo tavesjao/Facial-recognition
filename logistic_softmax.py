@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
-from utils import get_data,get_regular_data, split_data,sigmoid, init_weight_and_bias, softmax,softmax_cost, error_rate, classification_rate, y2indicator, standardize_data, save_model
+from utils import get_data,get_regular_data, split_data,sigmoid, init_weight_and_bias, softmax,softmax_cost, error_rate, classification_rate, y2indicator, standardize_data
 
 class LogisticModel(object):
     def __init__(self, learning_rate = 10e-7, reg = 0.05, epochs = 200000):
@@ -59,8 +59,13 @@ class LogisticModel(object):
     
     def get_bias(self):
         return self.b
+    
+    def save_model(model, filename):
+        import pickle
+        with open (filename, 'wb') as f:
+            pickle.dump(model, f)
 
-def main():
+def main(savemodel = False):
     path = 'Data/diabetes.csv'
     # XTrain, YTrain, XTest, YTest = get_data('Data/diabetes.csv')
     data = get_regular_data(path)
@@ -73,6 +78,8 @@ def main():
     print("Test score:", model.score(XTest, YTest))
     print("Final W:", model.get_weights())
     print("Final b:", model.get_bias())
+    if savemodel:
+        model.save_model('Models/logistic_model.pkl')
 
 if __name__ == '__main__':
     main()
